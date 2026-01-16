@@ -11,7 +11,7 @@ const Landing: React.FC = () => {
     <div className="min-h-screen bg-[#FDFDFD] dark:bg-slate-950 selection:bg-primary/20">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full group-hover:bg-primary/30 transition-colors"></div>
@@ -43,13 +43,16 @@ const Landing: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-48 pb-32 overflow-hidden">
+      <section className="relative pt-16 pb-20 overflow-hidden">
+        {/* Decorative Background */}
+        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 dark:opacity-5 pointer-events-none"></div>
+
         {/* Background Orbs */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[800px] h-[800px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-secondary/5 blur-[120px] rounded-full pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -60,22 +63,18 @@ const Landing: React.FC = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold mb-8 uppercase tracking-widest"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-primary/5 border border-primary/10 text-primary/80 text-[10px] font-bold mb-5 uppercase tracking-[0.2em] backdrop-blur-sm"
               >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                </span>
-                Join 10,000+ healthy members
+                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                The Future of Personal Vitality
               </motion.div>
-
-              <h1 className="text-6xl md:text-8xl font-black leading-[0.9] mb-8 text-slate-900 dark:text-white tracking-tighter">
+              <h1 className="text-6xl md:text-8xl font-black leading-[0.85] mb-4 text-slate-900 dark:text-white tracking-tighter">
                 Wellness that <br />
                 <span className="text-primary italic font-serif">works</span>
                 <span className="text-slate-400 dark:text-slate-600 italic font-serif"> for you.</span>
               </h1>
 
-              <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 max-w-lg leading-relaxed font-medium">
+              <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-lg leading-relaxed font-medium">
                 Personalized nutrition, real-time health tracking, and expert consultations. All in one seamless ecosystem designed for your longevity.
               </p>
 
@@ -91,18 +90,7 @@ const Landing: React.FC = () => {
                 </Button>
               </div>
 
-              <div className="mt-16 flex items-center gap-8 grayscale opacity-60">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4].map((i) => (
-                    <img key={i} src={`https://i.pravatar.cc/100?img=${i + 10}`} className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-950" alt="Avatar" />
-                  ))}
-                  <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-950 flex items-center justify-center text-[10px] font-bold">+2k</div>
-                </div>
-                <div className="text-sm font-semibold text-slate-500">
-                  <p className="text-slate-900 dark:text-white font-bold">4.9/5 Rating</p>
-                  <p>from our global community</p>
-                </div>
-              </div>
+
             </motion.div>
 
             <motion.div
@@ -124,28 +112,28 @@ const Landing: React.FC = () => {
                   initial={{ x: 20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="absolute bottom-10 left-8 right-8 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl p-8 rounded-3xl border border-white/50 dark:border-slate-800/50 shadow-2xl"
+                  className="absolute bottom-6 left-6 right-6 bg-white/60 dark:bg-slate-900/60 backdrop-blur-3xl p-6 rounded-[2.5rem] border border-white/40 dark:border-slate-800/40 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]"
                 >
-                  <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center justify-between mb-5">
                     <div>
-                      <h4 className="font-black text-slate-900 dark:text-white">Nutrition Performance</h4>
-                      <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Weekly Progress</p>
+                      <h4 className="font-black text-lg text-slate-900 dark:text-white leading-none mb-1">Nutrition Score</h4>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.15em]">Real-time Analysis</p>
                     </div>
-                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                      <Zap className="w-6 h-6 fill-primary/20" />
+                    <div className="h-10 w-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+                      <Zap className="w-5 h-5 fill-primary" />
                     </div>
                   </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between text-sm font-bold">
-                      <span className="text-slate-600 dark:text-slate-400">Target Achieved</span>
-                      <span className="text-primary">85%</span>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs font-black">
+                      <span className="text-slate-500">Daily Goal</span>
+                      <span className="text-primary bg-primary/10 px-2 py-0.5 rounded-lg">92%</span>
                     </div>
-                    <div className="w-full bg-slate-200/50 dark:bg-slate-700/50 h-3 rounded-full overflow-hidden p-0.5">
+                    <div className="w-full bg-slate-200/40 dark:bg-slate-700/40 h-2.5 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: "85%" }}
+                        animate={{ width: "92%" }}
                         transition={{ duration: 1.5, delay: 0.8 }}
-                        className="bg-primary h-full rounded-full shadow-[0_0_12px_rgba(20,184,166,0.4)]"
+                        className="bg-gradient-to-r from-primary to-primary-light h-full rounded-full shadow-[0_0_15px_rgba(20,184,166,0.5)]"
                       />
                     </div>
                   </div>
@@ -153,16 +141,16 @@ const Landing: React.FC = () => {
 
                 {/* Smaller Floating Badge */}
                 <motion.div
-                  animate={{ y: [0, -10, 0] }}
+                  animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-12 -right-6 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-100 dark:border-slate-700"
+                  className="absolute top-8 -right-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-3.5 rounded-2xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] flex items-center gap-3 border border-slate-100/50 dark:border-slate-700/50"
                 >
-                  <div className="h-10 w-10 rounded-xl bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center text-orange-600">
-                    <Star className="w-5 h-5 fill-orange-600" />
+                  <div className="h-9 w-9 rounded-xl bg-orange-100 dark:bg-orange-500/20 flex items-center justify-center text-orange-600">
+                    <Star className="w-5 h-5 fill-orange-500" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Premium User</p>
-                    <p className="text-sm font-black text-slate-900 dark:text-white">Elite Status</p>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Personalized</p>
+                    <p className="text-sm font-black text-slate-900 dark:text-white leading-tight">Elite Plan</p>
                   </div>
                 </motion.div>
               </div>
@@ -171,19 +159,7 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* Trust Bar */}
-      <section className="py-20 border-y border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/20">
-        <div className="max-w-7xl mx-auto px-6">
-          <p className="text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-12">Trusted by Innovation Leaders</p>
-          <div className="flex flex-wrap justify-center md:justify-between items-center gap-16 grayscale opacity-40 dark:invert contrast-125">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" className="h-7" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png" alt="Google" className="h-7" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" className="h-8" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" className="h-8" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="IBM" className="h-7" />
-          </div>
-        </div>
-      </section>
+
 
       {/* Features Preview */}
       <section id="how" className="py-32 relative">
@@ -254,7 +230,7 @@ const Landing: React.FC = () => {
             <a href="#" className="hover:text-primary transition-colors">Terms</a>
             <a href="#" className="hover:text-primary transition-colors">Contact</a>
           </div>
-          <p>Designed with ❤️ for your wellness.</p>
+
         </div>
       </footer>
     </div>

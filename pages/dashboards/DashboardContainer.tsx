@@ -12,6 +12,9 @@ import KitchenDashboard from './KitchenDashboard';
 import AdminDashboard from './AdminDashboard';
 import CoachDashboard from './CoachDashboard';
 import DeliveryDashboard from './DeliveryDashboard';
+import Nutrition from './Nutrition';
+import Fitness from './Fitness';
+import Consults from './Consults';
 
 const DashboardContainer: React.FC = () => {
   const auth = useContext(AuthContext);
@@ -20,7 +23,7 @@ const DashboardContainer: React.FC = () => {
   if (!auth?.user) return null;
 
   const getNavItems = (role: UserRole) => {
-    switch(role) {
+    switch (role) {
       case UserRole.DOCTOR:
         return [
           { label: 'Overview', icon: 'dashboard', path: '/dashboard' },
@@ -76,14 +79,13 @@ const DashboardContainer: React.FC = () => {
 
         <nav className="flex-1 mt-6 px-4 space-y-1.5 overflow-y-auto scrollbar-hide">
           {navItems.map(item => (
-            <Link 
+            <Link
               key={item.label}
               to={item.path}
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${
-                location.pathname === item.path 
-                  ? 'text-primary bg-primary/10 font-bold' 
+              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${location.pathname === item.path
+                  ? 'text-primary bg-primary/10 font-bold'
                   : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-              }`}
+                }`}
             >
               <Icon name={item.icon} className={location.pathname === item.path ? 'text-primary' : ''} />
               <span className="text-sm font-medium">{item.label}</span>
@@ -96,7 +98,7 @@ const DashboardContainer: React.FC = () => {
             <Icon name="logout" />
             <span className="text-sm font-medium">Log out</span>
           </button>
-          
+
           <div className="flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold ring-2 ring-primary/20">
               {auth.user.name.charAt(0)}
@@ -112,7 +114,7 @@ const DashboardContainer: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto bg-[#F8FAFC] dark:bg-slate-950 p-6 lg:p-10 relative">
         <header className="lg:hidden flex items-center justify-between mb-6">
-           <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <img src={LOGO_URL} alt="Sealth Logo" className="w-8 h-8 object-contain" />
             <span className="font-bold text-lg text-primary">Sealth</span>
           </div>
@@ -124,12 +126,15 @@ const DashboardContainer: React.FC = () => {
         <Routes>
           <Route index element={
             auth.user.role === UserRole.DOCTOR ? <DoctorDashboard /> :
-            auth.user.role === UserRole.KITCHEN ? <KitchenDashboard /> :
-            auth.user.role === UserRole.ADMIN ? <AdminDashboard /> :
-            auth.user.role === UserRole.COACH ? <CoachDashboard /> :
-            auth.user.role === UserRole.DELIVERY ? <DeliveryDashboard /> :
-            <CustomerDashboard />
+              auth.user.role === UserRole.KITCHEN ? <KitchenDashboard /> :
+                auth.user.role === UserRole.ADMIN ? <AdminDashboard /> :
+                  auth.user.role === UserRole.COACH ? <CoachDashboard /> :
+                    auth.user.role === UserRole.DELIVERY ? <DeliveryDashboard /> :
+                      <CustomerDashboard />
           } />
+          <Route path="nutrition" element={<Nutrition />} />
+          <Route path="fitness" element={<Fitness />} />
+          <Route path="consults" element={<Consults />} />
           {/* Default fallbacks */}
           <Route path="*" element={<div className="flex items-center justify-center h-[70vh] text-slate-400 font-medium">Coming Soon in V1.1</div>} />
         </Routes>
