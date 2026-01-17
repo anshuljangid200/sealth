@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export const LOGO_URL = "https://lh3.googleusercontent.com/aida-public/AB6AXuALyAHEYoU6B7EYd34eNGhY3hJnOTyFnJIDEfUKtppJ5g0uiMfBIUTgCGv9dJM7kIrCHsi69RNVCrV2T0YYaDH8uUeKuqfWWsGkA5Ir4XCkmjBM7OaikwR8SnNdCsdtSha1wX2nn77zkL1bEfOGRGWDW2hJKXV9-eD-xZ8DRV8rm6i9ffe7Oo4wblxfkOfQ22shsdtfY5qWTMNY7iV34Fd-cTQ3UVgaxYCP5jom0tXl3mr-fE43P7iKo0t0NbXMviaE5Cf1agYMGhIl";
+export const LOGO_URL = "/logo.jpg";
 
 export const MEAL_PLANS = [
   {

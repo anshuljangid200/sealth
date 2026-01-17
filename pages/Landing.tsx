@@ -15,7 +15,7 @@ const Landing: React.FC = () => {
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full group-hover:bg-primary/30 transition-colors"></div>
-              <img src={LOGO_URL} alt="Sealth Logo" className="h-10 w-10 relative" />
+              <img src={LOGO_URL} alt="Sealth Logo" className="h-10 w-10 relative rounded-xl object-cover" />
             </div>
             <div className="hidden md:block">
               <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white group-hover:text-primary transition-colors">SEALTH</span>

@@ -26,7 +26,10 @@ const Login: React.FC = () => {
   const roleIcons = {
     [UserRole.CUSTOMER]: <UserCheck className="w-4 h-4" />,
     [UserRole.DOCTOR]: <Stethoscope className="w-4 h-4" />,
-    [UserRole.ADMIN]: <Settings className="w-4 h-4" />
+    [UserRole.ADMIN]: <Settings className="w-4 h-4" />,
+    [UserRole.COACH]: <Icon name="fitness_center" className="w-4 h-4" />,
+    [UserRole.KITCHEN]: <Icon name="restaurant" className="w-4 h-4" />,
+    [UserRole.DELIVERY]: <Icon name="local_shipping" className="w-4 h-4" />
   };
 
   return (
@@ -49,7 +52,7 @@ const Login: React.FC = () => {
             <Link to="/" className="inline-block group">
               <div className="relative mb-6">
                 <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full group-hover:bg-primary/30 transition-colors"></div>
-                <img src={LOGO_URL} alt="Sealth Logo" className="h-20 w-auto mx-auto relative drop-shadow-2xl" />
+                <img src={LOGO_URL} alt="Sealth Logo" className="h-20 w-20 mx-auto relative drop-shadow-2xl rounded-[2rem] object-cover" />
               </div>
             </Link>
           </motion.div>
@@ -62,7 +65,7 @@ const Login: React.FC = () => {
             <div className="space-y-4">
               <label className="text-xs font-black uppercase tracking-widest text-slate-400 block ml-1">Continue as</label>
               <div className="grid grid-cols-3 gap-3 p-1.5 bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
-                {(Object.keys(UserRole) as Array<keyof typeof UserRole>).slice(0, 3).map((r) => (
+                {(Object.keys(UserRole) as Array<keyof typeof UserRole>).map((r) => (
                   <button
                     key={r}
                     type="button"
