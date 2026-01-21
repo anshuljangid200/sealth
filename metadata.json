@@ -1,0 +1,8 @@
+{
+  "name": "SEALTH - Smart Living. Simple Health.",
+  "description": "A premium health-tech ecosystem integrating personalized nutrition, real-time health tracking, and expert consultations.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
