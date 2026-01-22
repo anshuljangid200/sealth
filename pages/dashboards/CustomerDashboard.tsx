@@ -8,6 +8,11 @@ import {
   TrendingUp, ArrowRight, Clock, MapPin,
   Flame, Footprints, Moon, Zap, ShoppingBag
 } from 'lucide-react';
+import HealthReportModal from '../../components/modals/HealthReportModal';
+import MealLoggerModal from '../../components/modals/MealLoggerModal';
+import WeeklyPlanModal from '../../components/modals/WeeklyPlanModal';
+import CourierTrackingModal from '../../components/modals/CourierTrackingModal';
+import OnboardingGuide from '../../components/modals/OnboardingGuide';
 
 import { api } from '../../src/api/api';
 
@@ -16,6 +21,24 @@ const CustomerDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
+  const [showHealthReport, setShowHealthReport] = React.useState(false);
+  const [showMealLogger, setShowMealLogger] = React.useState(false);
+  const [showWeeklyPlan, setShowWeeklyPlan] = React.useState(false);
+  const [showCourier, setShowCourier] = React.useState(false);
+  const [showGuide, setShowGuide] = React.useState(false);
+
+  React.useEffect(() => {
+    // Simulate checking for "new user" - for demo, always show on first load of session
+    const hasSeenGuide = sessionStorage.getItem('sealth_guide_seen');
+    if (!hasSeenGuide) {
+      setTimeout(() => setShowGuide(true), 1500); // Small delay for effect
+    }
+  }, []);
+
+  const handleCloseGuide = () => {
+    setShowGuide(false);
+    sessionStorage.setItem('sealth_guide_seen', 'true');
+  };
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -44,10 +67,13 @@ const CustomerDashboard: React.FC = () => {
           <p className="text-slate-500 font-medium">Your metabolic efficiency is up 12% this week. Great progress!</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
+          <Button variant="ghost" onClick={() => setShowGuide(true)} className="text-slate-400 hover:text-primary">
+            <Icon name="help" className="w-6 h-6" />
+          </Button>
+          <Button variant="outline" className="gap-2" onClick={() => setShowHealthReport(true)}>
             <Icon name="file_download" /> Health Report
           </Button>
-          <Button className="gap-2" onClick={() => navigate('nutrition')}>
+          <Button className="gap-2" onClick={() => setShowMealLogger(true)}>
             <Icon name="add" /> Log Meal
           </Button>
         </div>
@@ -68,10 +94,10 @@ const CustomerDashboard: React.FC = () => {
                 Next: <span className="text-slate-900 dark:text-white font-bold">Paneer Tikka Quinoa Bowl</span> with Mint Chutney. Arrives tomorrow at 1:15 PM via Delivery Partner Sanjay.
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
-                <Button className="px-8 h-12 rounded-2xl shadow-lg shadow-primary/20">
+                <Button className="px-8 h-12 rounded-2xl shadow-lg shadow-primary/20" onClick={() => setShowCourier(true)}>
                   <MapPin className="w-4 h-4 mr-2" /> Track Meal
                 </Button>
-                <Button variant="outline" className="px-8 h-12 rounded-2xl" onClick={() => navigate('nutrition')}>
+                <Button variant="outline" className="px-8 h-12 rounded-2xl" onClick={() => setShowWeeklyPlan(true)}>
                   Modify Menu
                 </Button>
               </div>
@@ -228,6 +254,13 @@ const CustomerDashboard: React.FC = () => {
           ))}
         </Grid>
       </Section>
+
+      {/* Modals */}
+      <HealthReportModal isOpen={showHealthReport} onClose={() => setShowHealthReport(false)} />
+      <MealLoggerModal isOpen={showMealLogger} onClose={() => setShowMealLogger(false)} />
+      <WeeklyPlanModal isOpen={showWeeklyPlan} onClose={() => setShowWeeklyPlan(false)} />
+      <CourierTrackingModal isOpen={showCourier} onClose={() => setShowCourier(false)} />
+      {showGuide && <OnboardingGuide onClose={handleCloseGuide} />}
     </div>
   );
 };

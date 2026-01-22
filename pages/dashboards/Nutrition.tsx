@@ -8,9 +8,13 @@ import {
     Calendar, MapPin, Coffee, Pizza, Leaf,
     Droplets, Scale, Soup
 } from 'lucide-react';
+import WeeklyPlanModal from '../../components/modals/WeeklyPlanModal';
+import CourierTrackingModal from '../../components/modals/CourierTrackingModal';
 
 const Nutrition: React.FC = () => {
     const auth = React.useContext(AuthContext);
+    const [showWeeklyPlan, setShowWeeklyPlan] = React.useState(false);
+    const [showCourier, setShowCourier] = React.useState(false);
     const macros = [
         { label: 'Protein', value: '102g', target: '140g', color: 'bg-primary', progress: 72 },
         { label: 'Carbs', value: '165g', target: '220g', color: 'bg-secondary', progress: 75 },
@@ -34,10 +38,10 @@ const Nutrition: React.FC = () => {
                     <p className="text-slate-500 font-medium">Precision-balanced meals for {auth?.user?.name || 'User'}, tailored to your metabolic profile.</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" className="gap-2">
+                    <Button variant="outline" className="gap-2" onClick={() => setShowWeeklyPlan(true)}>
                         <Calendar className="w-4 h-4" /> Weekly Plan
                     </Button>
-                    <Button className="gap-2">
+                    <Button className="gap-2" onClick={() => setShowWeeklyPlan(true)}>
                         <Soup className="w-4 h-4" /> Customize Meals
                     </Button>
                 </div>
@@ -119,7 +123,10 @@ const Nutrition: React.FC = () => {
                             </div>
                         </div>
 
-                        <Button className="w-full h-14 rounded-2xl bg-white text-slate-950 font-black hover:bg-slate-100 transition-all">
+                        <Button
+                            className="w-full h-14 rounded-2xl bg-white text-slate-950 font-black hover:bg-slate-100 transition-all"
+                            onClick={() => setShowCourier(true)}
+                        >
                             Track Courier
                         </Button>
                     </div>
@@ -255,6 +262,10 @@ const Nutrition: React.FC = () => {
                     </div>
                 </Card>
             </Grid>
+
+            {/* Modals */}
+            <WeeklyPlanModal isOpen={showWeeklyPlan} onClose={() => setShowWeeklyPlan(false)} />
+            <CourierTrackingModal isOpen={showCourier} onClose={() => setShowCourier(false)} />
         </div>
     );
 };
