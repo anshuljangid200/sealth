@@ -7,6 +7,8 @@ import { UserRole } from '../../types';
 import { LOGO_URL } from '../../constants';
 import { Icon, Button, Container, cn } from '../../components/UI';
 import { Menu, X, LogOut, User, Bell, Search, Zap } from 'lucide-react';
+import SearchModal from '../../components/modals/SearchModal';
+import NotificationsModal from '../../components/modals/NotificationsModal';
 
 import CustomerDashboard from './CustomerDashboard';
 import DoctorDashboard from './DoctorDashboard';
@@ -27,6 +29,8 @@ const DashboardContainer: React.FC = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showPayPopup, setShowPayPopup] = useState(!auth?.hasActiveSubscription);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   if (!auth?.user) return null;
 
@@ -114,10 +118,16 @@ const DashboardContainer: React.FC = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-3 shrink-0">
-              <button className="p-2.5 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+              <button
+                onClick={() => setShowSearch(true)}
+                className="p-2.5 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+              >
                 <Search className="w-5 h-5" />
               </button>
-              <button className="p-2.5 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors relative">
+              <button
+                onClick={() => setShowNotifications(true)}
+                className="p-2.5 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors relative"
+              >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900" />
               </button>
@@ -284,6 +294,9 @@ const DashboardContainer: React.FC = () => {
           </div>
         </Container>
       </footer>
+
+      <SearchModal isOpen={showSearch} onClose={() => setShowSearch(false)} />
+      <NotificationsModal isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
     </div>
   );
 };
