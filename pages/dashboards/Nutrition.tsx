@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, Button, Badge, Icon, Container, Grid, Section, cn } from '../../components/UI';
+import { AuthContext } from '../../App';
 import {
     Utensils, Clock, TrendingUp, ChevronRight,
     Calendar, MapPin, Coffee, Pizza, Leaf,
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react';
 
 const Nutrition: React.FC = () => {
+    const auth = React.useContext(AuthContext);
     const macros = [
         { label: 'Protein', value: '102g', target: '140g', color: 'bg-primary', progress: 72 },
         { label: 'Carbs', value: '165g', target: '220g', color: 'bg-secondary', progress: 75 },
@@ -29,7 +31,7 @@ const Nutrition: React.FC = () => {
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Nutrition & Tiffin</h1>
-                    <p className="text-slate-500 font-medium">Precision-balanced meals tailored to your metabolic profile.</p>
+                    <p className="text-slate-500 font-medium">Precision-balanced meals for {auth?.user?.name || 'User'}, tailored to your metabolic profile.</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="gap-2">

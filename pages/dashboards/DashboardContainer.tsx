@@ -1,12 +1,12 @@
 
 import React, { useContext, useState } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../../App';
 import { UserRole } from '../../types';
 import { LOGO_URL } from '../../constants';
 import { Icon, Button, Container, cn } from '../../components/UI';
-import { Menu, X, LogOut, User, Bell, Search } from 'lucide-react';
+import { Menu, X, LogOut, User, Bell, Search, Zap } from 'lucide-react';
 
 import CustomerDashboard from './CustomerDashboard';
 import DoctorDashboard from './DoctorDashboard';
@@ -23,8 +23,10 @@ import Records from './Records';
 
 const DashboardContainer: React.FC = () => {
   const auth = useContext(AuthContext);
+  const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showPayPopup, setShowPayPopup] = useState(!auth?.hasActiveSubscription);
 
   if (!auth?.user) return null;
 
@@ -81,7 +83,7 @@ const DashboardContainer: React.FC = () => {
         <Container>
           <div className="h-20 flex items-center justify-between gap-8">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 shrink-0 group">
+            <Link to="/dashboard" className="flex items-center gap-3 shrink-0 group">
               <div className="w-10 h-10 rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <img src={LOGO_URL} alt="Sealth" className="w-full h-full object-cover rounded-2xl" />
               </div>
@@ -181,6 +183,49 @@ const DashboardContainer: React.FC = () => {
           )}
         </AnimatePresence>
       </header>
+
+      {/* Subscription Guard Modal */}
+      <AnimatePresence>
+        {showPayPopup && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm shadow-inner"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-2xl border border-slate-200 dark:border-slate-800 text-center"
+            >
+              <div className="w-20 h-20 bg-amber-100 dark:bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 mx-auto mb-6">
+                <Zap className="w-10 h-10 fill-amber-500" />
+              </div>
+              <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight italic">Activation Required</h2>
+              <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+                Namaste, {auth.user.name}. Your metabolic dashboard is ready, but your subscription is not yet active.
+              </p>
+              <div className="space-y-4">
+                <Button
+                  onClick={() => navigate('/subscriptions')}
+                  className="w-full h-14 rounded-2xl bg-primary text-white font-black italic shadow-xl shadow-primary/20"
+                >
+                  Pay Now to Activate
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => auth.logout()}
+                  className="w-full text-slate-400 font-bold"
+                >
+                  Logout
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col">

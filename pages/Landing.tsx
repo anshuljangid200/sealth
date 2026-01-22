@@ -4,9 +4,12 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { LOGO_URL } from '../constants';
 import { Button, Card, Icon, cn } from '../components/UI';
+import { AuthContext } from '../App';
+import { useContext } from 'react';
 import { ArrowRight, CheckCircle2, Star, Users, ShieldCheck, Zap } from 'lucide-react';
 
 const Landing: React.FC = () => {
+  const auth = useContext(AuthContext);
   return (
     <div className="min-h-screen bg-[#FDFDFD] dark:bg-slate-950 selection:bg-primary/20">
       {/* Navigation */}
@@ -31,12 +34,20 @@ const Landing: React.FC = () => {
             </div>
             <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
             <div className="flex items-center gap-4">
-              <Link to="/login">
-                <Button variant="ghost" className="text-sm px-5">Sign In</Button>
-              </Link>
-              <Link to="/subscriptions">
-                <Button className="text-sm px-6 shadow-xl shadow-primary/20">Get Started</Button>
-              </Link>
+              {auth?.user ? (
+                <Link to="/dashboard">
+                  <Button className="text-sm px-6 shadow-xl shadow-primary/20">Go to Dashboard</Button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="ghost" className="text-sm px-5">Sign In</Button>
+                  </Link>
+                  <Link to="/subscriptions">
+                    <Button className="text-sm px-6 shadow-xl shadow-primary/20">Get Started</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

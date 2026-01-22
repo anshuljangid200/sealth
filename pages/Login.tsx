@@ -6,21 +6,43 @@ import { AuthContext } from '../App';
 import { UserRole } from '../types';
 import { Button, Card, Icon, cn } from '../components/UI';
 import { LOGO_URL } from '../constants';
+import { api } from '../src/api/api';
 import { Mail, Lock, Key, ShieldCheck, ArrowRight, UserCheck, Stethoscope, Settings } from 'lucide-react';
 
 const Login: React.FC = () => {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const [role, setRole] = useState<UserRole>(UserRole.CUSTOMER);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('password');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800));
-    auth?.login(role);
-    navigate('/dashboard');
+
+    try {
+      const data = await api.auth.login({
+        email: email || `${role.toLowerCase()}@sealth.com`,
+        password: password
+      });
+
+      if (data.token) {
+        auth?.login({
+          ...data.user,
+          token: data.token,
+          avatar: 'https://picsum.photos/200'
+        });
+        navigate('/dashboard');
+      } else {
+        alert(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Could not connect to backend. Please ensure server is running.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const roleIcons = {
@@ -94,7 +116,8 @@ const Login: React.FC = () => {
                   <input
                     type="email"
                     placeholder="name@sealth.com"
-                    defaultValue={`${role.toLowerCase()}@sealth.com`}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-white dark:focus:bg-slate-800 outline-none transition-all font-medium"
                   />
@@ -113,7 +136,8 @@ const Login: React.FC = () => {
                   <input
                     type="password"
                     placeholder="••••••••"
-                    defaultValue="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-white dark:focus:bg-slate-800 outline-none transition-all font-medium"
                   />
@@ -121,22 +145,34 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-5 text-lg rounded-2xl h-16 relative overflow-hidden group shadow-2xl shadow-primary/20"
-            >
-              <span className={cn("flex items-center gap-2", isLoading && "opacity-0")}>
-                Sign In to Dashboard
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-              {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-                </div>
-              )}
-            </Button>
+            <div className="space-y-4">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-5 text-lg rounded-2xl h-16 relative overflow-hidden group shadow-2xl shadow-primary/20"
+              >
+                <span className={cn("flex items-center gap-2", isLoading && "opacity-0")}>
+                  Sign In to Dashboard
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </Button>
+
+              <button
+                type="button"
+                className="w-full h-16 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-black text-slate-700 dark:text-white"
+                onClick={() => alert('Integrating Google OAuth...')}
+              >
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6" alt="Google" />
+                Continue with Google
+              </button>
+            </div>
           </form>
+
 
           <div className="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 text-center">
             <p className="text-slate-500 font-bold text-sm">

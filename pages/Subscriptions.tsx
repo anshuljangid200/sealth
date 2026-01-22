@@ -5,11 +5,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LOGO_URL, MEAL_PLANS } from '../constants';
 import { Button, Card, Icon, Badge, cn } from '../components/UI';
 import { Check, Sparkles, Zap, Shield, ArrowRight, Info, Coffee, Utensils, HeartPulse, Clock } from 'lucide-react';
+import PaymentModal from '../components/PaymentModal';
+import { AuthContext } from '../App';
 
 const Subscriptions: React.FC = () => {
   const navigate = useNavigate();
+  const auth = React.useContext(AuthContext);
   const [preferences, setPreferences] = useState<string[]>([]);
   const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<typeof MEAL_PLANS[0] | null>(null);
+
+  const handlePlanSelect = (plan: typeof MEAL_PLANS[0]) => {
+    setSelectedPlan(plan);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    auth?.setPaid(true);
+    setIsPaymentModalOpen(false);
+    navigate('/login');
+  };
 
   const togglePref = (p: string) => {
     setPreferences(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]);
@@ -34,12 +50,20 @@ const Subscriptions: React.FC = () => {
             <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white">SEALTH</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link to="/login">
-              <Button variant="ghost" className="text-sm font-bold">Sign In</Button>
-            </Link>
-            <Link to="/subscriptions">
-              <Button className="text-sm font-black px-6 shadow-xl shadow-primary/20">Get Started</Button>
-            </Link>
+            {auth?.user ? (
+              <Link to="/dashboard">
+                <Button className="text-sm px-6 shadow-xl shadow-primary/20">Go to Dashboard</Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" className="text-sm font-bold">Sign In</Button>
+                </Link>
+                <Link to="/subscriptions">
+                  <Button className="text-sm font-black px-6 shadow-xl shadow-primary/20">Get Started</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -171,7 +195,7 @@ const Subscriptions: React.FC = () => {
                 </ul>
 
                 <Button
-                  onClick={() => navigate('/login')}
+                  onClick={() => handlePlanSelect(plan)}
                   className={cn(
                     "w-full h-16 py-4 text-lg rounded-2xl group shadow-2xl",
                     plan.isPremium
@@ -299,6 +323,16 @@ const Subscriptions: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {selectedPlan && (
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          planName={selectedPlan.name}
+          price={selectedPlan.price}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
     </div>
   );
 };

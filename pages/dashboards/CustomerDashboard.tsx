@@ -3,20 +3,44 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, Icon, Button, Badge, Container, Grid, Section, cn } from '../../components/UI';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../App';
 import {
   TrendingUp, ArrowRight, Clock, MapPin,
   Flame, Footprints, Moon, Zap, ShoppingBag
 } from 'lucide-react';
 
+import { api } from '../../src/api/api';
+
 const CustomerDashboard: React.FC = () => {
+  const auth = React.useContext(AuthContext);
   const navigate = useNavigate();
+  const [data, setData] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      if (auth?.user?.token) {
+        try {
+          const result = await api.dashboard.getData(auth.user.role, auth.user.token);
+          setData(result);
+        } catch (error) {
+          console.error('Failed to fetch dashboard data:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchData();
+  }, [auth?.user?.role, auth?.user?.token]);
+
+  if (loading) return <div className="flex items-center justify-center h-64 text-slate-500 font-bold">Synchronizing Vital Data...</div>;
 
   return (
     <div className="animate-fade-in space-y-10">
       {/* Header Section */}
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Namaste, Aryan!</h1>
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Namaste, {auth?.user?.name || 'Aryan'}!</h1>
           <p className="text-slate-500 font-medium">Your metabolic efficiency is up 12% this week. Great progress!</p>
         </div>
         <div className="flex gap-3">

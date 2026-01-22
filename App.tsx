@@ -9,35 +9,41 @@ import { UserRole, User } from './types';
 
 // Mock Auth Hook
 const useAuth = () => {
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<User & { hasActiveSubscription?: boolean } | null>(() => {
     const saved = localStorage.getItem('sealth_user');
     return saved ? JSON.parse(saved) : null;
   });
 
-  const login = (role: UserRole) => {
-    const mockUser: User = {
-      id: '1',
-      name: role === UserRole.DOCTOR ? 'Dr. Sarah Chen' : role === UserRole.ADMIN ? 'Admin Master' : 'Alexander Wright',
-      email: `${role.toLowerCase()}@sealth.com`,
-      role: role,
-      avatar: 'https://picsum.photos/200'
-    };
-    setUser(mockUser);
-    localStorage.setItem('sealth_user', JSON.stringify(mockUser));
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean>(() => {
+    return localStorage.getItem('sealth_paid') === 'true';
+  });
+
+  const login = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem('sealth_user', JSON.stringify(userData));
+  };
+
+  const setPaid = (status: boolean) => {
+    setHasActiveSubscription(status);
+    localStorage.setItem('sealth_paid', status ? 'true' : 'false');
   };
 
   const logout = () => {
     setUser(null);
+    setHasActiveSubscription(false);
     localStorage.removeItem('sealth_user');
+    localStorage.removeItem('sealth_paid');
   };
 
-  return { user, login, logout };
+  return { user, hasActiveSubscription, login, logout, setPaid };
 };
 
 export const AuthContext = React.createContext<{
   user: User | null;
-  login: (role: UserRole) => void;
+  hasActiveSubscription: boolean;
+  login: (userData: User) => void;
   logout: () => void;
+  setPaid: (status: boolean) => void;
 } | null>(null);
 
 const App: React.FC = () => {
@@ -51,9 +57,9 @@ const App: React.FC = () => {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
-          <Route 
-            path="/dashboard/*" 
-            element={auth.user ? <DashboardContainer /> : <Navigate to="/login" />} 
+          <Route
+            path="/dashboard/*"
+            element={auth.user ? <DashboardContainer /> : <Navigate to="/login" />}
           />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, Button, Badge, Container, Grid, Section, cn, Icon } from '../../components/UI';
+import { AuthContext } from '../../App';
 import {
     Activity, Flame, Timer, Footprints, ChevronUp, History,
     Zap, Heart, Trophy, Target, Bluetooth, Smartphone,
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react';
 
 const Fitness: React.FC = () => {
+    const auth = React.useContext(AuthContext);
     const stats = [
         { label: 'Steps Today', value: '11,432', target: '15,000', icon: Footprints, color: 'text-blue-500', bg: 'bg-blue-50', progress: 76 },
         { label: 'Energy Burn', value: '840', target: '1,200', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-50', progress: 70 },
@@ -28,7 +30,7 @@ const Fitness: React.FC = () => {
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Fitness & Biometrics</h1>
-                    <p className="text-slate-500 font-medium">Real-time physiological insights driven by SEALTH Pro-Link.</p>
+                    <p className="text-slate-500 font-medium">Real-time physiological insights for {auth?.user?.name || 'User'}, driven by SEALTH Pro-Link.</p>
                 </div>
                 <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
                     {['Daily', 'Weekly', 'Monthly'].map((period) => (

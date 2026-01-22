@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../../App';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Button, Badge, Icon, Grid, Container, cn } from '../../components/UI';
 import {
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react';
 
 const Consults: React.FC = () => {
+    const auth = useContext(AuthContext);
     const [view, setView] = useState<'discovery' | 'chat'>('discovery');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSpecialty, setSelectedSpecialty] = useState('All');
@@ -72,7 +74,7 @@ const Consults: React.FC = () => {
     ];
 
     const messages = [
-        { sender: 'Dr. Ananya Sharma', text: 'Namaste! I reviewed your meal logs for the past week.', time: '10:30 AM', isMe: false },
+        { sender: 'Dr. Ananya Sharma', text: `Namaste ${auth?.user?.name || 'User'}! I reviewed your meal logs for the past week.`, time: '10:30 AM', isMe: false },
         { sender: 'Me', text: "Hello Dr. Ananya. How does my Dal Tadka and Brown Rice combo look?", time: '10:32 AM', isMe: true },
         { sender: 'Dr. Ananya Sharma', text: "It looks good, but let's add some Sauteed Paneer for more protein. Your muscle recovery markers need it.", time: '10:35 AM', isMe: false },
         { sender: 'Me', text: "Got it. I'll update my tiffin preferences for next week.", time: '10:38 AM', isMe: true },
