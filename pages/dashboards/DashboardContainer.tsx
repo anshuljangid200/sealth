@@ -28,7 +28,7 @@ const DashboardContainer: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showPayPopup, setShowPayPopup] = useState(!auth?.hasActiveSubscription);
+  const [showPayPopup, setShowPayPopup] = useState(auth?.user?.role === UserRole.CUSTOMER && !auth?.hasActiveSubscription);
   const [showSearch, setShowSearch] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 

@@ -1,5 +1,5 @@
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../App';
@@ -9,6 +9,12 @@ import { LOGO_URL } from '../constants';
 import { api } from '../src/api/api';
 import { Mail, Lock, Key, ShieldCheck, ArrowRight, UserCheck, Stethoscope, Settings } from 'lucide-react';
 
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
 const Login: React.FC = () => {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -17,6 +23,65 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('password');
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const initGoogle = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: "1076867914186-qli3gohb4a3ek5imalkuqomgbhggk573.apps.googleusercontent.com",
+          callback: handleGoogleResponse,
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById("google-hidden-btn"),
+          { theme: "outline", size: "large" }
+        );
+      }
+    };
+    setTimeout(initGoogle, 500);
+  }, [role]);
+
+  const handleGoogleResponse = async (response: any) => {
+    setIsLoading(true);
+    try {
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(window.atob(base64));
+
+      const data = await api.auth.login({
+        email: payload.email,
+        name: payload.name,
+        role: role,
+        isGoogle: true
+      });
+
+      if (data.token) {
+        auth?.login({
+          ...data.user,
+          token: data.token,
+          avatar: payload.picture
+        });
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const triggerGoogleLogin = () => {
+    if (window.google) {
+      window.google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          const btn = document.querySelector('#google-hidden-btn [role="button"]') as HTMLElement;
+          if (btn) btn.click();
+          else alert("Google blocked the request. Please ensure 'http://localhost:3000' is added to Authorized JavaScript Origins in your Google Cloud Console.");
+        }
+      });
+    } else {
+      alert('Google API not loaded yet.');
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -24,7 +89,8 @@ const Login: React.FC = () => {
     try {
       const data = await api.auth.login({
         email: email || `${role.toLowerCase()}@sealth.com`,
-        password: password
+        password: password,
+        role: role // Pass the role to the api
       });
 
       if (data.token) {
@@ -33,7 +99,8 @@ const Login: React.FC = () => {
           token: data.token,
           avatar: 'https://picsum.photos/200'
         });
-        navigate('/dashboard');
+        // Redirect to home page instead of dashboard as requested
+        navigate('/');
       } else {
         alert(data.message || 'Login failed');
       }
@@ -164,11 +231,12 @@ const Login: React.FC = () => {
 
               <button
                 type="button"
-                className="w-full h-16 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-black text-slate-700 dark:text-white"
-                onClick={() => alert('Integrating Google OAuth...')}
+                disabled={isLoading}
+                className="w-full h-16 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all font-black text-slate-700 dark:text-white disabled:opacity-50"
+                onClick={triggerGoogleLogin}
               >
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6" alt="Google" />
-                Continue with Google
+                {isLoading ? 'Connecting...' : 'Continue with Google'}
               </button>
             </div>
           </form>
@@ -180,6 +248,9 @@ const Login: React.FC = () => {
             </p>
           </div>
         </Card>
+
+        {/* Hidden Official Button for Fallback */}
+        <div id="google-hidden-btn" style={{ display: 'none' }}></div>
 
         <motion.div
           initial={{ opacity: 0 }}
