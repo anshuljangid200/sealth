@@ -16,6 +16,8 @@ interface GoogleAccountModalProps {
     onSelect: (account: GoogleAccount) => void;
 }
 
+const ACCOUNTS: GoogleAccount[] = [];
+
 const GoogleAccountModal: React.FC<GoogleAccountModalProps> = ({ isOpen, onClose, onSelect }) => {
     if (!isOpen) return null;
 

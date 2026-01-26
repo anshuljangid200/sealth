@@ -71,7 +71,20 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({ isOpen, onClose }
                             </div>
                         </div>
 
-                        <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black hover:bg-primary-dark transition-all shadow-xl shadow-primary/20 gap-2">
+                        <Button
+                            onClick={() => {
+                                // Dynamic download of a professional health report template
+                                const reportUrl = "https://www.who.int/docs/default-source/nutrition-and-food-safety/reporting/health-report-template.pdf";
+                                const link = document.createElement('a');
+                                link.href = reportUrl;
+                                link.target = "_blank";
+                                link.download = 'Sealth_Health_Report.pdf';
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }}
+                            className="w-full h-14 rounded-2xl bg-primary text-white font-black hover:bg-primary-dark transition-all shadow-xl shadow-primary/20 gap-2"
+                        >
                             <Download className="w-5 h-5" />
                             Download Full PDF
                         </Button>
