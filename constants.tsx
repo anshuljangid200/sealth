@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export const LOGO_URL = "/logo.jpg";
+export const LOGO_URL = "/logo.png";
 
 export const MEAL_PLANS = [
   {
