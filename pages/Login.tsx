@@ -7,7 +7,7 @@ import { UserRole } from '../types';
 import { Button, Card, Icon, cn } from '../components/UI';
 import { LOGO_URL } from '../constants';
 import { api } from '../src/api/api';
-import { Mail, Lock, Key, ShieldCheck, ArrowRight, UserCheck, Stethoscope, Settings } from 'lucide-react';
+import { Mail, Lock, Key, ShieldCheck, ArrowRight, UserCheck, Stethoscope, Settings, Eye, EyeOff } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -22,6 +22,10 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('password');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('password');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const initGoogle = () => {
@@ -82,30 +86,37 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
+    if (isSignUp && password !== confirmPassword) {
+      alert("Passwords do not match!");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const data = await api.auth.login({
-        email: email || `${role.toLowerCase()}@sealth.com`,
-        password: password,
-        role: role // Pass the role to the api
-      });
+      const payload = isSignUp
+        ? { name: name || email.split('@')[0], email, password, role }
+        : { email, password, role };
+
+      const data = isSignUp
+        ? await api.auth.register(payload)
+        : await api.auth.login(payload);
 
       if (data.token) {
         auth?.login({
           ...data.user,
           token: data.token,
-          avatar: 'https://picsum.photos/200'
+          avatar: isSignUp ? `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email.split('@')[0])}&background=random` : 'https://picsum.photos/200'
         });
-        // Redirect to home page instead of dashboard as requested
         navigate('/');
       } else {
-        alert(data.message || 'Login failed');
+        alert(data.message || (isSignUp ? 'Registration failed' : 'Login failed'));
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Auth error:', error);
       alert('Could not connect to backend. Please ensure server is running.');
     } finally {
       setIsLoading(false);
@@ -145,12 +156,16 @@ const Login: React.FC = () => {
               </div>
             </Link>
           </motion.div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">Welcome Back</h1>
-          <p className="text-slate-500 font-medium text-lg">Your journey to holistic health starts here.</p>
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">
+            {isSignUp ? 'Join Sealth' : 'Welcome Back'}
+          </h1>
+          <p className="text-slate-500 font-medium text-lg">
+            {isSignUp ? 'Start your journey to holistic health today.' : 'Your journey to holistic health starts here.'}
+          </p>
         </div>
 
         <Card className="p-10 shadow-2xl shadow-slate-200/50 dark:shadow-none border-slate-200/50">
-          <form onSubmit={handleLogin} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-4">
               <label className="text-xs font-black uppercase tracking-widest text-slate-400 block ml-1">Continue as</label>
               <div className="grid grid-cols-3 gap-3 p-1.5 bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
@@ -174,6 +189,28 @@ const Login: React.FC = () => {
             </div>
 
             <div className="space-y-5">
+              {isSignUp && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="space-y-2"
+                >
+                  <label className="block text-sm font-black text-slate-700 dark:text-slate-300 ml-1">Full Name</label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                      <UserCheck className="w-5 h-5" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-white dark:focus:bg-slate-800 outline-none transition-all font-medium"
+                    />
+                  </div>
+                </motion.div>
+              )}
+
               <div className="space-y-2">
                 <label className="block text-sm font-black text-slate-700 dark:text-slate-300 ml-1">Email Address</label>
                 <div className="relative group">
@@ -194,22 +231,59 @@ const Login: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center ml-1">
                   <label className="block text-sm font-black text-slate-700 dark:text-slate-300">Password</label>
-                  <button type="button" className="text-xs font-bold text-primary hover:underline">Forgot?</button>
+                  {!isSignUp && <button type="button" className="text-xs font-bold text-primary hover:underline">Forgot?</button>}
                 </div>
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
                     <Lock className="w-5 h-5" />
                   </div>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-white dark:focus:bg-slate-800 outline-none transition-all font-medium"
+                    className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-white dark:focus:bg-slate-800 outline-none transition-all font-medium"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
+
+              {isSignUp && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="space-y-2"
+                >
+                  <label className="block text-sm font-black text-slate-700 dark:text-slate-300 ml-1">Confirm Password</label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-white dark:focus:bg-slate-800 outline-none transition-all font-medium"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -219,7 +293,7 @@ const Login: React.FC = () => {
                 className="w-full py-5 text-lg rounded-2xl h-16 relative overflow-hidden group shadow-2xl shadow-primary/20"
               >
                 <span className={cn("flex items-center gap-2", isLoading && "opacity-0")}>
-                  Sign In to Dashboard
+                  {isSignUp ? 'Create My Account' : 'Sign In to Dashboard'}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
                 {isLoading && (
@@ -244,7 +318,13 @@ const Login: React.FC = () => {
 
           <div className="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 text-center">
             <p className="text-slate-500 font-bold text-sm">
-              New to Sealth? <Link to="/subscriptions" className="text-primary font-black hover:underline ml-1">Schedule a Consultation</Link>
+              {isSignUp ? 'Already have an account?' : 'New to Sealth?'}
+              <button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-primary font-black hover:underline ml-1"
+              >
+                {isSignUp ? 'Sign In Instead' : 'Create an Account'}
+              </button>
             </p>
           </div>
         </Card>

@@ -16,15 +16,6 @@ interface GoogleAccountModalProps {
     onSelect: (account: GoogleAccount) => void;
 }
 
-const ACCOUNTS: GoogleAccount[] = [
-    { name: 'anshul jangid', email: 'anshuljangid.indian@gmail.com' },
-    { name: 'anshul jangid', email: 'anshuljangid.aj@gmail.com' },
-    { name: 'Anshul Jangid', email: 'anshuljangid.bundi@gmail.com' },
-    { name: 'Anshul sharma', email: 'hopehappiness3000@gmail.com' },
-    { name: 'Kriti Sharma', email: 'kritisharma.predusk@gmail.com' },
-    { name: 'anshul jangid', email: 'anshuljangid0001@gmail.com' },
-];
-
 const GoogleAccountModal: React.FC<GoogleAccountModalProps> = ({ isOpen, onClose, onSelect }) => {
     if (!isOpen) return null;
 

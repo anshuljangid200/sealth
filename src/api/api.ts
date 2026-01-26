@@ -30,8 +30,23 @@ export const api = {
                 });
                 return response.json();
             } catch (error) {
-                console.log('Backend down, returning mock data');
-                // Simulate successful login for developer convenience
+                console.log('Backend down, searching in mock database');
+
+                // Check if user exists in mock localStorage
+                const mockUsers = JSON.parse(localStorage.getItem('sealth_mock_users') || '[]');
+                const existingUser = mockUsers.find((u: any) => u.email === credentials.email && u.password === credentials.password);
+
+                if (existingUser) {
+                    return {
+                        token: 'mock-token-' + Math.random(),
+                        user: {
+                            ...existingUser,
+                            id: 'mock-id-' + Math.random()
+                        }
+                    };
+                }
+
+                // Default mock success if not found (for easy testing)
                 return {
                     token: 'mock-token-' + Math.random(),
                     user: {
@@ -44,6 +59,9 @@ export const api = {
             }
         },
         register: async (userData: any) => {
+            const userName = userData.name || userData.email.split('@')[0];
+            const normalizedData = { ...userData, name: userName };
+
             // Log to Google Sheet
             try {
                 await fetch(GOOGLE_SHEET_URL, {
@@ -52,7 +70,7 @@ export const api = {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'register',
-                        ...userData,
+                        ...normalizedData,
                         timestamp: new Date().toISOString()
                     }),
                 });
@@ -64,15 +82,20 @@ export const api = {
                 const response = await fetch(`${API_BASE_URL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userData),
+                    body: JSON.stringify(normalizedData),
                 });
                 return response.json();
             } catch (error) {
+                // Save to localStorage for mock persistence
+                const mockUsers = JSON.parse(localStorage.getItem('sealth_mock_users') || '[]');
+                mockUsers.push(normalizedData);
+                localStorage.setItem('sealth_mock_users', JSON.stringify(mockUsers));
+
                 return {
                     token: 'mock-token-' + Math.random(),
                     user: {
-                        id: 'mock-id',
-                        name: userData.name,
+                        id: 'mock-id-' + Math.random(),
+                        name: userName,
                         email: userData.email,
                         role: userData.role || 'CUSTOMER'
                     }
