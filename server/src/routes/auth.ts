@@ -7,6 +7,7 @@ const router = express.Router();
 // @route   POST /api/auth/register
 // @desc    Register user
 router.post('/register', async (req, res) => {
+    console.log('Registration attempt:', req.body);
     const { name, email, password, role } = req.body;
 
     try {
@@ -23,7 +24,8 @@ router.post('/register', async (req, res) => {
 
         res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error('SERVER REGISTRATION ERROR:', error);
+        res.status(500).json({ message: 'Server error: ' + (error as Error).message });
     }
 });
 
@@ -71,7 +73,8 @@ router.post('/login', async (req, res) => {
 
         res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error('SERVER LOGIN ERROR:', error);
+        res.status(500).json({ message: 'Server error: ' + (error as Error).message });
     }
 });
 

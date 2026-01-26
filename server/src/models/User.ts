@@ -5,7 +5,7 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
-    role: 'Customer' | 'Doctor' | 'Coach' | 'Kitchen' | 'Delivery' | 'Admin';
+    role: 'CUSTOMER' | 'DOCTOR' | 'COACH' | 'KITCHEN' | 'DELIVERY' | 'ADMIN';
     createdAt: Date;
     comparePassword(password: string): Promise<boolean>;
 }
@@ -16,21 +16,21 @@ const UserSchema: Schema = new Schema({
     password: { type: String, required: true },
     role: {
         type: String,
-        enum: ['Customer', 'Doctor', 'Coach', 'Kitchen', 'Delivery', 'Admin'],
-        default: 'Customer'
+        enum: ['CUSTOMER', 'DOCTOR', 'COACH', 'KITCHEN', 'DELIVERY', 'ADMIN'],
+        default: 'CUSTOMER'
     },
     createdAt: { type: Date, default: Date.now }
 });
 
 // Hash password before saving
-UserSchema.pre<IUser>('save', async function (next) {
-    if (!this.isModified('password')) return next();
+UserSchema.pre('save', async function () {
+    if (!this.isModified('password')) return;
+
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
-        next();
     } catch (err) {
-        next(err as Error);
+        throw err;
     }
 });
 
