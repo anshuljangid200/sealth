@@ -1,6 +1,6 @@
 const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:5000/api';
-// Replace this with your Google Apps Script Web App URL
-const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbyQzY6_Jc-Yf8-k6C-v5A9I-x-EwW-fL-8/exec'; // Placeholder
+// Connect to your Google Apps Script
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxpHMjq6rqLsVRBoK7KYILSB4yFPji6raeEtP0mEiTDRa2M-Vtyp2TF5XINeSIYaWFh/exec';
 
 export const api = {
     auth: {
