@@ -7,8 +7,11 @@ const router = express.Router();
 // @route   POST /api/auth/register
 // @desc    Register user
 router.post('/register', async (req, res) => {
-    console.log('Registration attempt:', req.body);
     const { name, email, password, role } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Please provide email and password' });
+    }
 
     try {
         let user = await User.findOne({ email });
@@ -34,34 +37,15 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Please provide email and password' });
+    }
+
     try {
-        let user = null;
-        try {
-            user = await User.findOne({ email });
-        } catch (dbError) {
-            console.error('DB Search failed, but check for dev fallback...');
-        }
-
-        // Developer Fallback Login: Works with ANY email if password is 'password'
-        if ((!user || user === null) && password === 'password') {
-            console.log(`Using developer fallback login for: ${email}`);
-            const roleFromEmail = email.split('@')[0]?.toUpperCase() || 'CUSTOMER';
-            const validRoles = ['CUSTOMER', 'DOCTOR', 'COACH', 'KITCHEN', 'DELIVERY', 'ADMIN'];
-            const assignedRole = validRoles.includes(roleFromEmail) ? roleFromEmail : 'CUSTOMER';
-
-            const payload = { userId: 'dev-123', role: assignedRole };
-            const token = jwt.sign(payload, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
-
-            return res.json({
-                token,
-                user: { id: 'dev-123', name: email.split('@')[0], email, role: assignedRole }
-            });
-        }
-
+        const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'Invalid credentials or Database down (Dev password is "password")' });
+            return res.status(400).json({ message: 'Invalid credentials' });
         }
-
 
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {

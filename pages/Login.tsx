@@ -20,11 +20,11 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState<UserRole>(UserRole.CUSTOMER);
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('password');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('password');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -115,9 +115,9 @@ const Login: React.FC = () => {
       } else {
         alert(data.message || (isSignUp ? 'Registration failed' : 'Login failed'));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Auth error:', error);
-      alert('Could not connect to backend. Please ensure server is running.');
+      alert(error.message || 'An unexpected error occurred. Please check if the server is running.');
     } finally {
       setIsLoading(false);
     }
